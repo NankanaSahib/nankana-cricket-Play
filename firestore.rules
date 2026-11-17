@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function owner() { return request.auth != null && request.auth.token.get('email', '') == 'owner@nankanacricket.app'; }
+    function mine(d) { return request.auth != null && d.uid == request.auth.uid; }
+    function pm(d) { return request.auth != null && request.auth.token.get('email', '').matches('^' + d.phone + '(-[0-9]+)?@players[.]nankanacricket[.]app$'); }
+    match /slots/{id} {
+      allow read: if true;
+      allow create: if mine(request.resource.data);
+      allow update: if owner()
+        || (mine(resource.data) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['until']) && request.resource.data.until == 0)
+        || (resource.data.until > 0 && resource.data.until < request.time.toMillis() && mine(request.resource.data));
+      allow delete: if owner() || mine(resource.data);
+    }
+    match /bookings/{id} {
+      allow read: if owner() || mine(resource.data) || pm(resource.data);
+      allow delete: if owner() || mine(resource.data);
+      allow create: if mine(request.resource.data)
+        && request.resource.data.pay == 'pending'
+        && request.resource.data.phone.matches('^03[0-9]{9}$')
+        && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 40
+        && !exists(/databases/$(db)/documents/blocked/$(request.resource.data.phone));
+      allow update: if owner() || ((mine(resource.data) || pm(resource.data)) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pay','tid']) && request.resource.data.pay == 'submitted');
+    }
+    match /blocked/{p} {
+      allow read, write: if owner();
+    }
+    match /pinreset/{p} {
+      allow get: if true;
+      allow list, write: if owner();
+    }
+    match /config/{id} {
+      allow read: if true;
+      allow write: if owner();
+    }
+  }
+}
