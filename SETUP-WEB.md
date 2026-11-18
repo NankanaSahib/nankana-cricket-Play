@@ -14,10 +14,10 @@ The page itself stores nothing. It talks to a free Firebase cloud database. Ever
 6. Project settings (gear icon) > General: copy the Web API Key and Project ID into config.js.
 
 ## 2. Put the page online (GitHub Pages, free)
-1. On github.com create a new PUBLIC repository named nankana-cricket.
+1. On github.com create a new PUBLIC repository named nankana-cricket-Play.
 2. Upload everything in this folder (drag and drop in the browser), including config.js and privacy.html.
 3. Settings > Pages > Deploy from a branch > main > / (root) > Save.
-4. After 1 to 2 minutes your page is at https://nankanasahib.github.io/nankana-cricket/ . If your GitHub name or repository name is different, tell me and I will make a new QR poster.
+4. After 1 to 2 minutes your page is at https://nankanasahib.github.io/nankana-cricket-Play/ . If your GitHub name or repository name is different, tell me and I will make a new QR poster.
 5. Open it on two phones. Make a booking on one and check that the other shows the hour as booked.
 The code contains no secrets. The Firebase web key is meant to be public, and your rules protect the data.
 
